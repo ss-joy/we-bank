@@ -4,6 +4,7 @@ import { getSession, useSession } from "next-auth/react";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { authOptions } from "./api/auth/[...nextauth]";
+import Head from "next/head";
 
 const BankAccount = (): JSX.Element => {
   const [user, setUser] = useState({
@@ -33,6 +34,9 @@ const BankAccount = (): JSX.Element => {
 
   return (
     <div>
+      <Head>
+        <title>weBank | User account</title>
+      </Head>
       <section>
         <Image
           className="block mx-auto"

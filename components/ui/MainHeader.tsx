@@ -10,12 +10,8 @@ const MainHeader = (): JSX.Element => {
         className="shadow p-4 rounded-xl shadow-fuchsia-300 hover:shadow-slate-500"
       >
         <div>
-          <span className="text-4xl text-purple-600 hover:text-purple-700">
-            we
-          </span>
-          <span className="text-4xl font-bold text-fuchsia-400 hover:text-fuchsia-700">
-            Bank
-          </span>
+          <span className="text-4xl text-green-600 ">we</span>
+          <span className="text-4xl font-bold text-green-300 ">Bank</span>
         </div>
       </Link>
       <MainNavBar />

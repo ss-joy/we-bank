@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/router";
 import { ApiResponse } from "@/types/api-responses";
+import Head from "next/head";
 
 export default function SignUpPage(): JSX.Element {
   const router = useRouter();
@@ -67,6 +68,9 @@ export default function SignUpPage(): JSX.Element {
 
   return (
     <>
+      <Head>
+        <title>weBank sign up page</title>
+      </Head>
       <h1 className="mt-8 text-slate-500 text-center font-bold text-5xl">
         Sign Up here
       </h1>
