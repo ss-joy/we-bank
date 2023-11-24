@@ -3,6 +3,8 @@ import { NextApiRequest, NextApiResponse } from "next";
 import User from "@/models/user-model";
 import { ApiResponse } from "@/types/api-responses";
 import { transactionSchema } from "@/schema/transaction";
+import { hash } from "bcrypt";
+import ShoppingTransaction from "@/models/shopping-transaction";
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ApiResponse>
@@ -42,12 +44,27 @@ export default async function handler(
         });
       }
       if (userFound.balance > req.body.amount) {
-        const dbResponse = await User.updateOne(
+        const dbResponse1 = await User.updateOne(
           { email: req.body.email },
           { balance: userFound.balance - req.body.amount }
         );
-        console.log(dbResponse);
-        res.setHeader("Access-Control-Allow-Origin", "*");
+        const trxId = await hash(
+          userFound.email + userFound.id + req.body.amount + Date.now(),
+          7
+        );
+        const dbResponse2 = await ShoppingTransaction.create({
+          trxId: trxId,
+          total_cost: req.body.amount,
+          userId: userFound.id,
+          email: userFound.email,
+          trx_date: new Date(),
+        });
+        if (!dbResponse1 || !dbResponse2) {
+          return res.status(200).json({
+            status: "error",
+            message: "transaction failed",
+          });
+        }
 
         return res.status(200).json({
           status: "success",
