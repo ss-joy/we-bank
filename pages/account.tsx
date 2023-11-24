@@ -18,6 +18,7 @@ const BankAccount = (): JSX.Element => {
 
       if (session) {
         const response = await fetch(
+          //@ts-ignore
           `/api/user-details/${session?.user!.user_id}`
         );
         const pResponse = await response.json();
