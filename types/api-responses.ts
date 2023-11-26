@@ -17,7 +17,10 @@ export interface ApiResponse {
     | "This user is already registered"
     | "OK"
     | "Insufficient balance"
-    | "transaction successful";
+    | "transaction successful"
+    | "transaction failed"
+    | "Showing all products transactions"
+    | "No transactions found. Buy something first..";
   error?: {
     errorCode: number;
     errorBody?: any;

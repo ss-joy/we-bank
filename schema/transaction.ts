@@ -1,7 +1,8 @@
 import { z } from "zod";
 
 export const transactionSchema = z.object({
-  email: z.string(),
+  userEmail: z.string(),
+  userId: z.string(),
   amount: z.number(),
 });
 
