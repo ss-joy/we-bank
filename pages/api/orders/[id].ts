@@ -1,6 +1,5 @@
 import connectToDB from "@/lib/database";
 import { NextApiRequest, NextApiResponse } from "next";
-import User from "@/models/user-model";
 import { ApiResponse } from "@/types/api-responses";
 import ShoppingTransaction from "@/models/shopping-transaction";
 export default async function handler(
