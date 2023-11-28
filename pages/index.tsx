@@ -15,7 +15,8 @@ export default function Home() {
         <span className="text-5xl font-bold text-green-300 ">Bank</span>
       </h1>
       <p className="text-center text-3xl mt-8 mx-2  text-green-900 font-bold ">
-        A banking system that integrated with weBuy to make shopping easier
+        A "fictional" banking system that integrates with weBuy to make shopping
+        easier
       </p>
     </div>
   );

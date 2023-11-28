@@ -1,40 +1,63 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# **we Buy**
 
-## Getting Started
+Part of the weBuy ecommerce web application.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Live preview
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### [weBuy(Live)](https://we-buy-omega.vercel.app/)
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+### [we Bank(Live)](https://we-bank.vercel.app/)
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+---
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+## **Description and goals**
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+An ecommerce website that fascillitates transactions between two different organizations.
 
-## Learn More
+- A Bank organization(we Bank)
+  - [link to we-buy](https://github.com/ss-joy/weBuy)
+- An ecommerce website(we Buy)
 
-To learn more about Next.js, take a look at the following resources:
+The main objective of this project is to demonstrate transactions and communications between different api endpoints.This project gives users the ability to order and buy various kinds of items from an ecommerce shop. In order to complete the purchase they need to sign up to a different entity. A fictional ecommerce called **weBuy**.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Features
 
-## Deploy on Vercel
+- Fully typesafe frontend and backend code written in Typescript.
+- Complete **runtime data validation** implemented with zod both in client and server side.
+- Fully implemented Authentication and Authorization.
+- Fully responsive in all screen sizes and devices.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## Technologies used
+
+- <mark>Typescript</mark> : Typesafe code implementation
+- <mark>NextJs</mark> :Frontend and Backend integration
+- <mark>MongoDb</mark> :Database
+- <mark>Mongoose</mark> : Database ODM
+- <mark>Tailwind CSS</mark> : Styling
+- <mark>Radix UI</mark> : Icons,Accessible components
+- <mark>Next Auth</mark> : Authentication and Authorization
+
+## Some screenshots
+
+- Homepage:
+
+  ![HomePage](/public/githubimages/homepage.png)
+
+## Setup:
+
+- First clone this github repo.
+- Install all the dependencies using npm.
+  - `npm i`
+- Run the command `npm run dev`.
+- This should start the application at http://localhost:3000
+- Now add some environment variables.
+  - Add a .env.local file inside the root folder.
+  - Then add these envionment variables in the .env.local file:
+    - **MONGODB_URI**
+    - **NEXTAUTH_SECRET**
