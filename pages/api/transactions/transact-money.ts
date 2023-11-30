@@ -71,6 +71,7 @@ export default async function handler(
         total_cost: body.amount,
         email: userFound.email,
         trx_date: new Date(),
+        transactionsItemsLists: body.cartProductsDetails,
       });
       if (!dbResponse1 || !dbResponse2) {
         return res.status(500).json({
