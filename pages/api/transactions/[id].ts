@@ -21,7 +21,7 @@ export default async function handler(
     const userId = req.query.id;
 
     const transactions = await ShoppingTransaction.find({
-      ecom_user_id: userId,
+      buyerId: userId,
     });
     if (!transactions) {
       return res.status(500).json({
