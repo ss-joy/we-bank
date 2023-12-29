@@ -15,7 +15,7 @@ const BankAccount = (): JSX.Element => {
   useEffect(() => {
     async function getSessionData() {
       const session = await getSession();
-
+      console.log(session);
       if (session) {
         const response = await fetch(
           //@ts-ignore

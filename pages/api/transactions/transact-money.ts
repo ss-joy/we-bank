@@ -1,10 +1,13 @@
+import { BanktransactionSchemaType } from "./../../../schema/bank-transaction-data-schema";
 import connectToDB from "@/lib/database";
 import { NextApiRequest, NextApiResponse } from "next";
 import User from "@/models/user-model";
 import { ApiResponse } from "@/types/api-responses";
-import { TransactionSchemaType, transactionSchema } from "@/schema/transaction";
 import { hash } from "bcrypt";
 import ShoppingTransaction from "@/models/shopping-transaction";
+import { BanktransactionSchema } from "@/schema/bank-transaction-data-schema";
+import { trasnsactMoneyToEachSeller } from "@/lib/transactions";
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ApiResponse>
@@ -19,8 +22,9 @@ export default async function handler(
         message: "Something went wrong. Please try again!",
       });
     }
+
     try {
-      transactionSchema.parse(req.body);
+      BanktransactionSchema.parse(req.body);
     } catch (error) {
       return res.status(400).json({
         message: "Please enter all the required informations..",
@@ -31,63 +35,122 @@ export default async function handler(
         },
       });
     }
+    /**
+     * DOES BUYER EXIST
+     */
+    let buyerFound = undefined;
+    const body: BanktransactionSchemaType = req.body;
 
-    let userFound = undefined;
-    const body: TransactionSchemaType = req.body;
-    console.log(body);
     try {
-      userFound = await User.findOne({
-        email: body.userEmail,
+      buyerFound = await User.findOne({
+        userEcommerceId: body.buyerId,
       });
-      if (!userFound) {
-        return res.status(405).json({
+      if (!buyerFound) {
+        return res.status(404).json({
           message: "User not found",
           status: "error",
         });
       }
     } catch (error) {
-      return res.status(405).json({
+      return res.status(404).json({
         message: "User not found",
         status: "error",
       });
     }
 
-    if (userFound.balance > req.body.amount) {
-      const trxId = await hash(
-        userFound.email +
-          userFound.id +
-          req.body.amount +
-          body.userId +
-          Date.now(),
-        7
+    /**
+     * CHECK BALANCE
+     */
+    if (buyerFound.balance < body.totalCost) {
+      return res.status(403).json({
+        status: "error",
+        message: "Insufficient balance",
+      });
+    }
+    /**
+     * CREATE TRANSACTION ID
+     */
+    const trxId = await hash(
+      buyerFound.email +
+        buyerFound.id +
+        body.totalCost +
+        JSON.stringify(body.cartProductsDetails) +
+        Date.now(),
+      7
+    );
+    /**
+     *  SUBTRACT MONEY FROM BUYER
+     */
+
+    try {
+      const response = await User.updateOne(
+        {
+          userEcommerceId: buyerFound.userEcommerceId,
+        },
+        {
+          balance: buyerFound.balance - body.totalCost,
+        }
       );
-      const dbResponse1 = await User.updateOne(
-        { email: body.userEmail },
-        { balance: userFound.balance - req.body.amount }
+      if (!response) {
+        throw new Error("transaction failed");
+      }
+    } catch (error) {
+      res.status(500).json({
+        status: "error",
+        message: "transaction failed",
+        error: {
+          errorCode: 500,
+          errorBody: error,
+        },
+      });
+    }
+    /**
+     * TRANSACT MONEY TO SELLERS
+     */
+    try {
+      await Promise.all(
+        body.cartProductsDetails.map((product) => {
+          return trasnsactMoneyToEachSeller(product);
+        })
       );
-      const dbResponse2 = await ShoppingTransaction.create({
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        status: "error",
+        message: "transaction failed",
+        error: {
+          errorCode: 500,
+          errorBody: error,
+        },
+      });
+    }
+    /**
+     * SAVING TRANSACTION TO DB
+     */
+    try {
+      const response = await ShoppingTransaction.create({
         trxId: trxId,
-        ecom_user_id: body.userId,
-        total_cost: body.amount,
-        email: userFound.email,
-        trx_date: new Date(),
+        totalCost: body.totalCost,
+        buyerId: body.buyerId,
+        buyerEmail: body.buyerEmail,
+        trxDate: Date.now(),
         transactionsItemsLists: body.cartProductsDetails,
       });
-      if (!dbResponse1 || !dbResponse2) {
-        return res.status(500).json({
-          status: "error",
-          message: "transaction failed",
-        });
+      if (!response) {
+        throw new Error("Transaction failed");
       }
-
-      return res.status(200).json({
+      return res.status(201).json({
         status: "success",
         message: "transaction successful",
       });
-    } else {
-      return res.status(400).json({
+    } catch (error) {
+      return res.status(500).json({
         status: "error",
-        message: "Insufficient balance",
+        message: "transaction failed",
+        error: {
+          errorCode: 500,
+          errorBody: error,
+        },
       });
     }
   } else {

@@ -3,7 +3,6 @@ import User from "@/models/user-model";
 import { compare } from "bcrypt";
 import NextAuth, { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-
 import { UserSignUpSchema } from "@/schemas/user-signup-schema";
 
 export const authOptions: AuthOptions = {
@@ -15,17 +14,17 @@ export const authOptions: AuthOptions = {
         userPwd: { label: "Your password", type: "password" },
       },
       async authorize(credentials, req) {
+        console.log("credentials called", credentials);
         UserSignUpSchema.omit({
           userConfirmPwd: true,
           userName: true,
+          userEcommerceId: true,
         }).parse(credentials);
-
         await connectToDB();
-
+        console.log(credentials);
         const userFound = await User.findOne({
           email: credentials?.userEmail,
         });
-
         if (!userFound) {
           // throw new Error("User is not registered");ts gives error
           return null;

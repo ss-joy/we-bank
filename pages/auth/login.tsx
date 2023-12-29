@@ -14,7 +14,7 @@ export default function LoginPage(): JSX.Element {
     register,
     formState: { errors, isSubmitting, isSubmitSuccessful },
   } = useForm<UserSignUpSchemaType>();
-  console.log("succs", isSubmitSuccessful);
+
   async function onSubmit(data: UserSignUpSchemaType) {
     const ans = await signIn("credentials", {
       callbackUrl: "/",
@@ -22,7 +22,6 @@ export default function LoginPage(): JSX.Element {
       userEmail: data.userEmail,
       userPwd: data.userPwd,
     });
-
     if (ans?.error && !ans.ok) {
       toast({
         variant: "destructive",

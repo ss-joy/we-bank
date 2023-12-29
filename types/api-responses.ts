@@ -20,6 +20,7 @@ export interface ApiResponse {
     | "transaction successful"
     | "transaction failed"
     | "Showing all products transactions"
+    | "User is not a member of we Buy"
     | "No transactions found. Buy something first..";
   error?: {
     errorCode: number;

@@ -1,5 +1,4 @@
 import { Schema, model, models } from "mongoose";
-import { number } from "zod";
 
 interface IProductItem {
   productId: string;
@@ -8,11 +7,12 @@ interface IProductItem {
 }
 interface IShoppingTransaction {
   trxId: string;
-  total_cost: number;
-  ecom_user_id: string;
-  email: string;
-  trx_date: Date;
+  totalCost: number;
+  buyerId: string;
+  buyerEmail: string;
+  trxDate: Date;
   transactionsItemsLists: [IProductItem];
+  trxStatus: string;
 }
 const ProductItem = new Schema<IProductItem>({
   productId: {
@@ -34,19 +34,24 @@ const shoppingTransaction = new Schema<IShoppingTransaction>({
     type: String,
     required: true,
   },
-  total_cost: {
+  totalCost: {
     type: Number,
     required: true,
   },
-  ecom_user_id: {
+  buyerId: {
     type: String,
     required: true,
   },
-  email: {
+  buyerEmail: {
     type: String,
     required: true,
   },
-  trx_date: { type: Date, required: true },
+  trxDate: { required: true, type: Date, default: Date.now },
+  trxStatus: {
+    type: String,
+    enum: ["Pending", "Delivered"],
+    default: "Pending",
+  },
   transactionsItemsLists: {
     type: [ProductItem],
     required: true,

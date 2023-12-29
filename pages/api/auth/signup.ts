@@ -1,8 +1,6 @@
 import connectToDB from "@/lib/database";
-
 import { hash } from "bcrypt";
 import { NextApiRequest, NextApiResponse } from "next";
-
 import {
   UserSignUpSchema,
   UserSignUpSchemaType,
@@ -10,12 +8,13 @@ import {
 import { ZodError } from "zod";
 import User from "@/models/user-model";
 import { ApiResponse } from "@/types/api-responses";
+import axios, { AxiosError } from "axios";
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ApiResponse>
 ) {
   if (req.method === "POST") {
-    console.log(req.body);
     try {
       await connectToDB();
     } catch (err) {
@@ -43,9 +42,15 @@ export default async function handler(
         });
       }
     }
-    const { userName, userEmail, userPwd }: UserSignUpSchemaType = req.body;
+    const {
+      userName,
+      userEmail,
+      userPwd,
+      userEcommerceId,
+    }: UserSignUpSchemaType = req.body;
+
     const userFound = await User.findOne({
-      email: userEmail,
+      userEcommerceId: userEcommerceId,
     });
     if (userFound) {
       return res.status(405).json({
@@ -53,12 +58,32 @@ export default async function handler(
         status: "error",
       });
     }
+    try {
+      const data = await axios.post(
+        "https://we-buy-omega.vercel.app/api/auth/find-user",
+        {
+          userEcommerceId: userEcommerceId,
+        }
+      );
+      console.log(data.data);
+    } catch (error) {
+      console.log((error as AxiosError).response?.data);
+      return res.status(404).json({
+        message: "User is not a member of we Buy",
+        status: "error",
+        error: {
+          errorCode: 404,
+          errorBody: error,
+        },
+      });
+    }
+    // console.log(data);
     const hashedPass = await hash(userPwd, 10);
-
     const dbResponse = await User.create({
       name: userName,
       email: userEmail,
       password: hashedPass,
+      userEcommerceId: userEcommerceId,
     });
     if (!dbResponse) {
       return res.status(500).json({

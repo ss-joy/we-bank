@@ -4,5 +4,6 @@ export const UserSignUpSchema = z.object({
   userEmail: z.string().email(),
   userPwd: z.string().min(5),
   userConfirmPwd: z.string(),
+  userEcommerceId: z.string(),
 });
 export type UserSignUpSchemaType = z.infer<typeof UserSignUpSchema>;

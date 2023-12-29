@@ -5,6 +5,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/router";
 import { ApiResponse } from "@/types/api-responses";
 import Head from "next/head";
+import { cn } from "@/lib/utils";
 
 export default function SignUpPage(): JSX.Element {
   const router = useRouter();
@@ -14,6 +15,7 @@ export default function SignUpPage(): JSX.Element {
     userPwd: string;
     userConfirmPwd: string;
     userEmail: string;
+    userEcommerceId: string;
   };
 
   const {
@@ -41,6 +43,7 @@ export default function SignUpPage(): JSX.Element {
         userName: data.userName,
         userEmail: data.userEmail,
         userPwd: data.userPwd,
+        userEcommerceId: data.userEcommerceId,
       }),
     });
     const ans: ApiResponse = await response.json();
@@ -71,20 +74,30 @@ export default function SignUpPage(): JSX.Element {
       <Head>
         <title>weBank sign up page</title>
       </Head>
-      <h1 className="mt-8 text-slate-500 text-center font-bold text-5xl">
-        Sign Up here
-      </h1>
+
       <form
-        className="flex flex-col mt-8 mx-auto p-2 w-11/12 md:w-10/12 lg:w-4/6 xl:w-3/6 2xl:w-2/5 sm:p-8 h-2/3 justify-between border-2 border-red-50 rounded"
+        className="flex flex-col mt-8 mx-auto p-4 w-[400px] md:w-[600px] lg:w-[600px] sm:p-8 h-2/3 justify-between border-2 border-red-50 rounded-md shadow-md shadow-slate-600"
         onSubmit={handleSubmit(onSubmit)}
         noValidate
       >
+        <h1 className="mt-2 mb-4 text-slate-500 font-bold text-3xl">
+          Sign Up here
+        </h1>
+        <p className="text-red-500 mb-4">
+          You must be a member of
+          <span className="font-bold text-slate-500 mx-2 transition-all hover:border-slate-500 hover:border-b-2 hover:p-1">
+            <a href="we-buy-omega.vercel.app" target="_blank">
+              weBuy
+            </a>
+          </span>
+          before you can use weBank
+        </p>
         <label className="form-label" htmlFor="userName">
           Your name*
         </label>
         <p className="text-red-700">{errors.userName?.message}</p>
         <input
-          className="form-input"
+          className={cn("form-input", "rounded-xl")}
           {...register("userName", {
             required: { value: true, message: "Your name is required" },
             minLength: {
@@ -100,7 +113,7 @@ export default function SignUpPage(): JSX.Element {
         </label>
         <p className="text-red-700">{errors.userEmail?.message}</p>
         <input
-          className="form-input"
+          className={cn("form-input", "rounded-xl")}
           {...register("userEmail", {
             required: {
               value: true,
@@ -114,12 +127,27 @@ export default function SignUpPage(): JSX.Element {
           type="email"
           id="userEmail"
         />
+        <label className="form-label" htmlFor="userEcommerceId">
+          Your we Buy ecommerce Id*
+        </label>
+        <p className="text-red-700">{errors.userEcommerceId?.message}</p>
+        <input
+          className={cn("form-input", "rounded-xl")}
+          {...register("userEcommerceId", {
+            required: {
+              value: true,
+              message: "We buy member id is required",
+            },
+          })}
+          type="text"
+          id="userEcommerceId"
+        />
         <label className="form-label" htmlFor="userPwd">
           Choose a password*
         </label>
         <p className="text-red-700">{errors.userPwd?.message}</p>
         <input
-          className="form-input"
+          className={cn("form-input", "rounded-xl")}
           {...register("userPwd", {
             required: {
               value: true,
@@ -138,7 +166,7 @@ export default function SignUpPage(): JSX.Element {
         </label>
         <p className="text-red-700">{errors.userConfirmPwd?.message}</p>
         <input
-          className="form-input"
+          className={cn("form-input", "rounded-xl")}
           {...register("userConfirmPwd", {
             required: {
               value: true,
@@ -154,7 +182,6 @@ export default function SignUpPage(): JSX.Element {
           id="userConfirmPwd"
           type="text"
         />
-
         <button className="btn2 disabled:bg-gray-500" disabled={isSubmitting}>
           Sign Up
         </button>

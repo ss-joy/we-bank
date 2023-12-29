@@ -4,6 +4,7 @@ interface IUser {
   email: string;
   password: string;
   balance: number;
+  userEcommerceId: string;
 }
 const userSchema = new Schema<IUser>({
   name: {
@@ -22,6 +23,10 @@ const userSchema = new Schema<IUser>({
     type: Number,
     required: true,
     default: 5000,
+  },
+  userEcommerceId: {
+    type: String,
+    required: true,
   },
 });
 
