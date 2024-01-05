@@ -5,6 +5,7 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { authOptions } from "./api/auth/[...nextauth]";
 import Head from "next/head";
+import { useRouter } from "next/router";
 
 const BankAccount = (): JSX.Element => {
   const [user, setUser] = useState({
@@ -47,7 +48,7 @@ const BankAccount = (): JSX.Element => {
           height={400}
         />
       </section>
-      <section className="mx-auto shadow shadow-slate-500 p-4 rounded-lg font-bold text-xl md:w-2/3 ">
+      <section className="mx-auto shadow shadow-slate-500 p-4 rounded-lg font-bold text-xl md:w-[650px]">
         <p className="my-4 ml-4 ">
           <span className="bg-green-300 p-2 rounded-md">email</span>
           <span className="ml-4">{user.email}</span>

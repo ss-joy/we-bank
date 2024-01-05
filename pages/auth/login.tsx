@@ -33,9 +33,7 @@ export default function LoginPage(): JSX.Element {
         title: "Login Successful!",
         description: "You will be shortly redirected...",
       });
-      setTimeout(() => {
-        router.push("/");
-      }, 3000);
+      router.push("/account");
     }
   }
   return (
