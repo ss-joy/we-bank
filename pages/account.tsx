@@ -6,6 +6,7 @@ import React, { useEffect, useState } from "react";
 import { authOptions } from "./api/auth/[...nextauth]";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import { UserIcon } from "lucide-react";
 
 const BankAccount = (): JSX.Element => {
   const [user, setUser] = useState({
@@ -53,14 +54,13 @@ const BankAccount = (): JSX.Element => {
           <span className="bg-green-300 p-2 rounded-md">email</span>
           <span className="ml-4">{user.email}</span>
         </p>
-        <p className="my-4 ml-4">
-          <span className="bg-green-300 p-2 rounded-md">name</span>
+        <p className="my-4 ml-4 flex items-center">
+          <UserIcon className="bg-green-300 p-2 rounded-md w-[45px] h-[45px]" />
+
           <span className="ml-4">{user.name}</span>
         </p>
         <p className="my-4 ml-4">
-          <span className="bg-green-300 p-2 rounded-md">
-            Current account balance
-          </span>
+          <span className="bg-green-300 p-2 rounded-md">Current balance</span>
           <span className="ml-4">{user.balance}</span>$
         </p>
       </section>
