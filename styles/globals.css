@@ -13,6 +13,6 @@
     @apply bg-blue-500 text-white p-4 rounded font-bold hover:bg-blue-700 block transition-all disabled:bg-slate-500;
   }
   .nav-btn {
-    @apply px-4 py-2 m-4  text-3xl text-green-700  transition-all rounded-md hover:font-bold hover:text-slate-500;
+    @apply sm:px-4 py-2 mx-1 md:m-4  shadow shadow-green-300 text-3xl text-green-700  transition-all rounded-md hover:font-bold hover:text-slate-500;
   }
 }

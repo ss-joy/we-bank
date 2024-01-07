@@ -4,7 +4,7 @@ import MainNavBar from "./MainNavbar";
 
 const MainHeader = (): JSX.Element => {
   return (
-    <header className="flex justify-between items-center p-2 sm:px-4 md:px-8 2xl:px-10">
+    <header className="flex justify-between mx-auto items-center p-2 sm:px-4 md:px-8 2xl:px-10">
       <Link
         href={"/"}
         className="shadow p-4 rounded-xl shadow-fuchsia-300 hover:shadow-slate-500"
