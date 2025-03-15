@@ -3,10 +3,7 @@ import connectToDB from "@/lib/database";
 import { NextApiRequest, NextApiResponse } from "next";
 import User from "@/models/user-model";
 import { ApiResponse } from "@/types/api-responses";
-import { hash } from "bcrypt";
-import ShoppingTransaction from "@/models/shopping-transaction";
 import { BanktransactionSchema } from "@/schema/bank-transaction-data-schema";
-import { trasnsactMoneyToEachSeller } from "@/lib/transactions";
 
 export default async function handler(
   req: NextApiRequest,
@@ -23,11 +20,16 @@ export default async function handler(
       });
     }
 
+    /**
+     * VALIDATE REQUEST BODY
+     */
     try {
       BanktransactionSchema.parse(req.body);
     } catch (error) {
+      console.log(error);
       return res.status(400).json({
-        message: "Please enter all the required informations..",
+        message:
+          "Bank: Please enter all the required informations for making a successfull order",
         status: "error",
         error: {
           errorCode: 400,
@@ -35,118 +37,64 @@ export default async function handler(
         },
       });
     }
-    /**
-     * DOES BUYER EXIST
-     */
-    let buyerFound = undefined;
+
     const body: BanktransactionSchemaType = req.body;
+    const buyerFound = await User.findOne({
+      userEcommerceId: body.buyerId,
+    });
 
-    try {
-      buyerFound = await User.findOne({
-        userEcommerceId: body.buyerId,
-      });
-      if (!buyerFound) {
-        return res.status(404).json({
-          message: "User not found",
-          status: "error",
-        });
-      }
-    } catch (error) {
+    if (!buyerFound) {
       return res.status(404).json({
-        message: "User not found",
+        message:
+          "Bank: Please open a we-bank account before ordering your products.",
         status: "error",
       });
     }
 
-    /**
-     * CHECK BALANCE
-     */
-    if (buyerFound.balance < body.totalCost) {
-      return res.status(403).json({
+    if (buyerFound.balance < body.totalTransactionAmount) {
+      return res.status(422).json({
         status: "error",
-        message: "Insufficient balance",
+        message: "Bank: You have insuffecient balance in your bank!",
       });
     }
-    /**
-     * CREATE TRANSACTION ID
-     */
-    const trxId = await hash(
-      buyerFound.email +
-        buyerFound.id +
-        body.totalCost +
-        JSON.stringify(body.cartProductsDetails) +
-        Date.now(),
-      7
-    );
-    /**
-     *  SUBTRACT MONEY FROM BUYER
-     */
 
-    try {
-      const response = await User.updateOne(
-        {
-          userEcommerceId: buyerFound.userEcommerceId,
+    await User.updateOne(
+      {
+        userEcommerceId: body.buyerId,
+      },
+      {
+        $inc: {
+          balance: -body.totalTransactionAmount,
         },
-        {
-          balance: buyerFound.balance - body.totalCost,
-        }
-      );
-      if (!response) {
-        throw new Error("transaction failed");
       }
-    } catch (error) {
-      res.status(500).json({
-        status: "error",
-        message: "transaction failed",
-        error: {
-          errorCode: 500,
-          errorBody: error,
-        },
-      });
-    }
+    );
+
     /**
      * TRANSACT MONEY TO SELLERS
      */
     try {
-      await Promise.all(
-        body.cartProductsDetails.map((product) => {
-          return trasnsactMoneyToEachSeller(product);
-        })
-      );
+      const transactionPromises = body.orderedProducts.map((oP) => {
+        return User.findOneAndUpdate(
+          { userEcommerceId: oP.sellerId },
+          {
+            $inc: {
+              balance: oP.totalCostForTheProduct,
+            },
+          }
+        );
+      });
+
+      await Promise.all(transactionPromises);
+
+      return res.status(201).json({
+        status: "success",
+        message: "Bank: You have successfully placed your order!",
+      });
     } catch (error) {
       console.log(error);
       return res.status(500).json({
         status: "error",
-        message: "transaction failed",
-        error: {
-          errorCode: 500,
-          errorBody: error,
-        },
-      });
-    }
-    /**
-     * SAVING TRANSACTION TO DB
-     */
-    try {
-      const response = await ShoppingTransaction.create({
-        trxId: trxId,
-        totalCost: body.totalCost,
-        buyerId: body.buyerId,
-        buyerEmail: body.buyerEmail,
-        trxDate: Date.now(),
-        transactionsItemsLists: body.cartProductsDetails,
-      });
-      if (!response) {
-        throw new Error("Transaction failed");
-      }
-      return res.status(201).json({
-        status: "success",
-        message: "transaction successful",
-      });
-    } catch (error) {
-      return res.status(500).json({
-        status: "error",
-        message: "transaction failed",
+        message: "Bank: Placing order failed",
         error: {
           errorCode: 500,
           errorBody: error,

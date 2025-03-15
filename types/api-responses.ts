@@ -16,12 +16,14 @@ export interface ApiResponse {
     | "Showing details of single product"
     | "This user is already registered"
     | "OK"
-    | "Insufficient balance"
-    | "transaction successful"
-    | "transaction failed"
+    | "Bank: You have successfully placed your order!"
+    | "Bank: Placing order failed"
     | "Showing all products transactions"
     | "User is not a member of we Buy"
-    | "No transactions found. Buy something first..";
+    | "No transactions found. Buy something first.."
+    | "Bank: You have insuffecient balance in your bank!"
+    | "Bank: Please enter all the required informations for making a successfull order"
+    | "Bank: Please open a we-bank account before ordering your products.";
   error?: {
     errorCode: number;
     errorBody?: any;
